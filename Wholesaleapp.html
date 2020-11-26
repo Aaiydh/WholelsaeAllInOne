@@ -1,0 +1,1091 @@
+WHOLESALE APP CONFIGURATION
+AFTER INTEGRATION ON THEME AND CHECK THE APP VERSION 2.3.6
+THEN STEP BY STEP FOLLOW THE POINTS WHICH MENTION BELOWW BY STEPS AND SO ON.
+STEP#1
+DOWNLOAD THE FILE OF LATEST VERSION.
+STEP#2
+COPY THE LATEST CODE OF DONWLOADED FILE AND PASTE IT ON THE SHOPIFY ASSETS AND SNIPPETS FOLDER.
+AFTER THAT PLEASE CHECK IN THEME.LIQUID
+{% include 'wholesale-all-in-one' %}
+IS INCLUDED IN BODY TAG OR/NOT
+STEP#3
+OPEN THE PRODUCT CARD GIRD FILE AND PASS THE VARIABLE
+wsaio-pid-{{product.id}}
+LIKE THE EXAPMLE:
+<!--  -->
+****************************************
+<span class="{% if product.available %} wsaio-pid-{{product.id}} {% endif %}"></span>
+****************************************
+AND SAVE IT.
+STEP#4
+OPEN THE wholesale-all-in-one.liquid FILE SEARCH THE THE SECTION/CAPTURE
+Home, Search, Related Products and Collection Page Price Design.
+SEARCH THE PRODUCT PRICE CODE AND PASTE IT LIKE GIVEN EXAMPLE:
+****************************************
+{%- capture hcsr_price_html -%}
+<dl class="price price--on-sale " data-price="">
+<div class="price__sale">
+<dt><span class="visually-hidden visually-hidden--inline">Regular price</span></dt>
+<dd><s class="price-item price-item--regular" data-regular-price="">%compare_at_price%</s></dd>
+<dt><span class="visually-hidden visually-hidden--inline">Sale price</span></dt>
+<dd><span class="price-item price-item--sale" data-sale-price="">%regular_price%</span>
+<span class="price-item__label price-item__label--sale" aria-hidden="true">Sale</span>
+</dd></div></dl>
+{%- endcapture -%}.
+****************************************
+AND SAVE IT.
+STEP#5
+OPEN THE wholesale-all-in-one.liquid FILE SEARCH THE THE SECTION/CAPTURE
+Volume Discount Price Design for Collection Page.
+SEARCH THE PRODUCT PRICE CODE AND PASTE IT LIKE GIVEN EXAMPLE:
+****************************************
+{%- capture hcsr_qb_price_html -%}
+<dl class="product__price--on-sale" data-price="">
+<div class="price__sale">
+<dt><span class="visually-hidden visually-hidden--inline">Regular price</span></dt>
+<dd><s class="price-item price-item--regular" data-regular-price="">%compare_at_price%</s></dd>
+<dt><span class="visually-hidden visually-hidden--inline">Sale price</span></dt>
+<dd><span class="price-item price-item--sale" data-sale-price="">%regular_price%</span>
+<span class="price-item__label price-item__label--sale" aria-hidden="true">Sale</span>
+</dd></div></dl>
+{%- endcapture -%}
+****************************************
+AND SAVE IT.
+STEP#6
+OPEN THE wholesale-all-in-one.liquid FILE SEARCH THE THE SECTION/CAPTURE
+Product Page Original Product Price Design.
+SEARCH THE PRODUCT PRICE CODE AND PASTE IT LIKE GIVEN EXAMPLE:
+****************************************
+{%- capture product_price_original_html -%}
+<span class="product__price--on-sale"> %regular_price% </span>
+<div class="price__sale">
+<dt><span class="visually-hidden visually-hidden--inline">Regular price</span></dt>
+<dd><s class="price-item price-item--regular" data-regular-price="">%compare_at_price%</s>
+</dd>
+<dt><span class="visually-hidden visually-hidden--inline">Sale price</span></dt>
+<dd>
+<span class="price-item price-item--sale" data-sale-price="">%regular_price%</span>
+<span class="price-item__label price-item__label--sale" aria-hidden="true">Sale</span></dd></div>
+{%- endcapture -%}
+****************************************
+AND SAVE IT.
+STEP#7
+OPEN THE product-template.liquid FILE SEARCH THE DIV OF PRICE SHOW.
+SEARCH THE PRODUCT PRICE CODE AND PASS THE VARIABLE LIKE GIVEN EXAMPLE:
+****************************************
+<div class="product__price waio-product-template wsaio-pid-{{product.id}}"></div>
+AFTER THIS CONFIGURATION GOTO THEME.JS FILE AND DO SOME CHANGE ONSLECTED CHANGE EVENT OF VARIANT.
+LIKE THE EXAMPLE:
+****************************************
+/*** Event handler for when a variant input changes. ***/
+<script>
+_onSelectChange: function() {
+var variant = this._getVariantFromOptions();
+var eyes = this.product;              // Make A Variable like this line
+this.$container.trigger({
+type: 'variantChange',
+variant: variant
+});
+if (!variant) {
+return;
+}
+this._updateMasterSelect(variant);
+this._updateImages(variant);
+this._updatePrice(variant);
+this._updateSKU(variant);
+this.currentVariant = variant;
+setTimeout(function(){ selected_variant_id = variant.id; var _indx = current_product.variants.findIndex(function(x){return x.id == variant.id}); if(_indx > -1){ var _price = current_product.variants[_indx].price; } WholesaleAllInOne.productTemplate({ productId : "default", variantId : variant.id, price : _price, priceDesign : "default", saleBadgeDirectParent : "default", SaleBadgeDirectChild : "default", saleLabelHTML : "default", saleLabelMode : "default", saleLabelPosition : "default", quickView : "default", quickViewQBSelector : "default", priceSelector : ".product__price .price", qbTableSelector : "form[action='/cart/add']:after", }); },1000);
+WSAIO.productDiscount({         //Call this function
+template: 'product',
+product_id: eyes.id,
+product_handle: eyes.handle ,
+variant_id: variant.id,
+variant_sku: variant.sku,
+variant_price: variant.price,
+variant_compare_at_price: null
+});
+if (this.enableHistoryState) {
+this._updateHistoryState(variant);
+}
+},
+</script>
+****************************************
+AND SAVE IT.
+STEP#8
+OPEN THE Product-recommendations.liquid/ Product-related.liquid FILE ITS DEPENDS ON FILE NAME MAKE SURE CHECK THE ACCOURATE NAME AND APPLY THE METHOD WHICH GIVEN IN THE DOCUMENTATION FILE.
+METHOD 3 APPLY WITH PASSING VARIABLE.
+product_id="{{product.id}}" product_handle="{{product.handle}}" product_variant_id="{{product.selected_or_first_available_variant.id}}" product_variant_sku="{{product.selected_or_first_available_variant.sku}}" product_variant_price="{{product.selected_or_first_available_variant.price}}" product_variant_compare_price="{{product.selected_or_first_available_variant.compare_at_price}}"
+AND THEN
+<script>
+setTimeout(function(){
+$('body .col_clct').each(function(){
+var clctn_dta = JSON.parse($(this).attr("clct"));
+for(var i=0;i<clctn_dta.length; i++){
+WSAIO.product_in_collects.push(clctn_dta[i]);
+}
+});
+$('.grid__item').each(function (){
+var product__cus__id   =  $(this).attr('product_id');
+var product__cus__handle =  $(this).attr('product_handle');
+var product__cus__variant_id =  $(this).attr('product_variant_id');
+var product__cus__variant_sku =  $(this).attr('product_variant_sku');
+var product__cus__variant_price =  $(this).attr('product_variant_price');
+var product__cus__variant_comapare_price = $(this).attr('product_variant_compare_price');
+WSAIO.productDiscount({
+template: 'collection',
+product_id: product__cus__id,
+product_handle: product__cus__handle,
+variant_id: product__cus__variant_id,
+variant_sku: product__cus__variant_sku,
+variant_price: product__cus__variant_price,
+variant_compare_at_price: product__cus__variant_comapare_price
+});
+});
+},2500)
+</script>
+STEP#9
+Cart Page Configuration
+FIRST CHECKED THE ALL SELECTOR AND ITS DEFAULT VALUES AND CONVERT PRODUCT %ID% INTO ITEM %KEY% WITH THE REPLACEMENT OF COLLON ':' INTO UDDERSCORE '_'.
+AND THEN CONFIG THE cart-template.liquid && ASSIGN/PASS THE VARIABLES.
+LIKE THE GIVEN EXAPMLE:
+****************************************
+<span class="single-item-price-on-cart ws-item-price-{{item.key|replace:':','_'}}"></span>
+<span class="total-item-price-on-cart ws-item-total-price-{{item.key|replace:':','_'}}"></span>
+<span class="subtotal-item-price-on-cart wsaio--subtotal"></span>
+MAKE THIS VARIABLE PASS THE CORRECT SELECTOR/SECTION/PARENT.
+THEN COUPON CODE FORM GENRATE LIKE THIS
+Discount COUPON FIELDS
+<div class="discount-code-form"></div>
+<div class="discount-code-alerts"></div>
+<style type="text/css">
+span.wsaio--coupon-code-form {
+display: flex;
+justify-content: flex-end;
+}
+
+</style>
+
+<script type="text/javascript">
+**************************************************
+CUSTOM CALL THE FUNCTION ON CART PAGE
+setTimeout(function(){
+$(".clearfix.con_row.cart-page-price ul").each(function(){
+var global_cart__key = "";
+$(this).find('li').each(function(index, elm){
+$(elm).addClass('li__cus_cls'+index)
+var key = $(elm).find("a.remove_item_button").attr("data-id");
+console.log("key",key);
+if(typeof key != "undefined"){
+key= key.replace(":","_");
+global_cart__key = key
+}
+var single__item__price = $(elm).find("p.mobile-label-price").length
+var single__item__total = $(elm).find("p.mobile-label-total").length
+if(single__item__price >0){
+$(elm).find(".price").addClass("ws-item-price-"+global_cart__key);
+}else if(single__item__total>0){
+$(elm).find(".price").addClass("ws-item-total-price-"+global_cart__key);
+}
+})
+});
+setTimeout(function()
+{
+$( ".total_row.clearfix ul" ).find("span.total-price").addClass("wsaio--subtotal");
+},600)
+WSAIO.preCheckout();
+},1000);
+
+</script>
+
+AND MARK THE CHECKOUT BOX IN WHOLESALE APP DISCOUNT FILED
+PASTE IT ABOVE THE SUBTOTAL
+NOTE: USE THIS CONITIONAL CODE WHEN PRICE CANNOT CHANGE ON QUANTITY CHANGE AND PRODUCT REMOVE
+<!-- DISCOUNT ON BANNNER -->
+<script type="text/javascript">
+$(document).bind('DOMNodeInserted', function(e) {
+var element = e.target;
+var elm = $(element).attr("class")
+if(typeof elm != 'undefined'){
+if(elm.indexOf('atc-banner--container')>-1){
+$.getJSON('/cart', function(e){
+var keyss = '';
+$(e.items).each(function(ee){
+var key = e.items[ee].id;
+if(key == selected_variant_id){
+var r = e.items[ee].key;
+keyss = 'ws-item-price-'+r.replace(':','_');
+}
+}).promise().done(function(){
+$('.single-item-price-on-ajaxcart').addClass(keyss);
+WSAIO.preCheckout();
+})
+})
+setTimeout(function(){
+WSAIO.preCheckout();
+WSAIO.checkoutEventListner();
+},100)
+}
+}
+});
+</script>
+
+<script type="text/javascript">
+// _onRemoveItem: function
+// _handleInputQty: function
+setTimeout(function(){
+WSAIO.preCheckout
+setTimeout(function(){
+$(".cart__row").each(function(){
+var key = $(this).attr("data-cart-item-key");
+if(typeof key != "undefined"){
+console.log(key);
+key= key.replace(":","_");
+$(this).find(".cart__price").find("[data-cart-item-regular-price]").removeAttr("class");
+$(this).find(".cart__price").find("[data-cart-item-regular-price]").addClass("ws-item-price-"+key);
+$(this).find(".cart__final-price").find("[data-cart-item-regular-price]").removeAttr("class");
+$(this).find(".cart__final-price").find("[data-cart-item-regular-price]").addClass("ws-item-total-price-"+key);
+}
+});
+WSAIO.preCheckout();
+},1000);
+},600);
+
+*******************************************************************************************************
+IF CART PAGE CRAETE THE ISSUE ON QUANTITY CHANGE THEN REGEX FUNCTION CALL ON REMOVE AND CHANGE QUANTITY
+
+$.fn.removeClassRegEx = function(regex) {
+var classes = $(this).attr('class');
+if (!classes || !regex) return false;
+var classArray = [];
+classes = classes.split(' ');
+for (var i = 0, len = classes.length; i < len; i++)
+if (!classes[i].match(regex)) classArray.push(classes[i]);
+$(this).attr('class', classArray.join(' '));
+};
+
+setTimeout(function(){
+$('.cart__table tbody tr').each(function(){
+var qtyvalue = $(this).find(".cart-item__qty label").attr("for");
+var qtyvaluesplit = qtyvalue.split('quantity_');
+var qtyvaluesplitreplace = qtyvaluesplit[1].replace(":","_");
+$(this).find('.cart-item__price').removeClassRegEx('ws-');
+$(this).find('.cart-item__price').addClass("ws-item-price-" + qtyvaluesplitreplace);
+$(this).find('.qb-price-item').removeClassRegEx('ws-');
+$(this).find('.qb-price-item').addClass("ws-item-price-" + qtyvaluesplitreplace);
+$(this).find('.text-right.small--hide ').removeClassRegEx('ws-');
+$(this).find('.text-right.small--hide ').addClass("ws-item-total-price-" + qtyvaluesplitreplace);
+});
+
+setTimeout(function(){
+WSAIO.preCheckout();
+WSAIO.checkoutEventListner();
+},800);
+},2000)
+
+*******************************************************************************************************
+
+</script>
+****************************************
+AND SAVE IT.
+STEP#10
+OPEN THE wholesale-all-in-one.liquid FILE SEARCH THE THE SECTION/CAPTURE/ETC
+BUY NOW BUTTON.
+DO SOME CHAGING IN DESIGN AND SELECTOR (BUTTON Class="shopify-payment-button") LIKE GIVEN EXAMPLE:
+****************************************
+<div><div><div><div>
+<button type="button" class="shopify-payment-button__button shopify-payment-button__button--unbranded _2ogcW-Q9I-rgsSkNbRiJzA _2EiMjnumZ6FVtlC7RViKtj _2-dUletcCZ2ZL1aaH0GXxT" data-testid="Checkout-button">Buy it now</button>
+<button aria-disabled="true" aria-hidden="true" class="shopify-payment-button__more-options _2ogcW-Q9I-rgsSkNbRiJzA shopify-payment-button__button--hidden" type="button" data-testid="sheet-open-button">More payment options</button>
+</div></div></div></div>
+****************************************
+AND SAVE IT.
+STEP#11
+OPEN THE wholesale-all-in-one.liquid FILE GOTO THE LAST OF THIS FILE AND FIND THE SCRIPT FUNCTION HERE YOU MAKE THE FOR EACH LOOP LIKE THE EXAMPLE:
+CODE FOR COLLECTION PAGE
+FIRST STEP:
+PUT THIS CODE TO THE MAIN CLASS LINE
+<div
+product_id="{{product.id}}" product_handle="{{product.handle}}" product_variant_id="{{product.selected_or_first_available_variant.id}}"
+product_variant_sku="{{product.selected_or_first_available_variant.sku}}" product_variant_price="{{product.selected_or_first_available_variant.price}}"
+product_variant_compare_price="{{product.selected_or_first_available_variant.compare_at_price}}"
+
+</div>
+
+SECOND STEP:
+<script>
+//Global Variable is "WSAIO"//
+setTimeout(function(){                  // TIME SET FOR OUR CUSTOM CODE
+console.log('=========================')
+$('.search--price--listing').each(function (){   //HERE THE MAIN SELECTOR\CLASS RIGHT
+var a_one   =  $(this).attr('product_id');
+var a_two   =  $(this).attr('product_handle');
+var a_three =  $(this).attr('product_variant_id');
+var a_four  =  $(this).attr('product_variant_sku');
+var a_five  =  $(this).attr('product_variant_price');
+var a_six = $(this).attr('product_variant_compare_price');
+WSAIO.productDiscount({
+template: 'collection',// FOR WHICH PAGE YOU WANT TO APPLY THIS RULE
+product_id: a_one,
+product_handle: a_two,
+variant_id: a_three,
+variant_sku: a_four,
+variant_price: a_five,
+variant_compare_at_price: a_six
+});
+});
+},1500)
+</script>
+
+STEP#12
+OPEN THE wholesale-all-in-one.liquid FILE GOTO THE LAST OF THIS FILE AND FIND THE SCRIPT FUNCTION HERE YOU MAKE THE FOR EACH LOOP IF THE THEME DOESNOT WORK ON ABOVE EACH LOOP CONCEPT LIKE THE EXAMPLE.
+<script>
+setTimeout(function(){
+$('.template-product .grid__item').each(function (){      // HERE THE MAIN CLASS
+var a_one   =  $(this).find("a.grid-product__link").attr('href');  //PRODUCT SHOW DIV
+if(typeof a_one != 'undefined'){
+var product_test  = a_one.split("products/")[1];
+if(product_test.indexOf('?')>-1){
+product_test = product_test.split('?')[0]
+}
+console.log(product_test);
+jQuery.getJSON("/products/"+ product_test +".js" ,function(a){  //FUNCTION
+console.log(a);
+var product_id = a.id;            //PASS THE VALUES
+var product_handle =a.handle;
+var product_variant_id =a.variants[0].id;
+var product_variant_sku =a.variants[0].sku;
+var product_variant_price =a.variants[0].price;
+var product_variant_compare_at_price =null;
+WSAIO.productDiscount({       //MAIN FUNCTION WHICH
+template: 'collection',
+product_id: product_id,
+product_handle: product_handle,
+variant_id: product_variant_id,
+variant_sku: product_variant_sku,
+variant_price: product_variant_price,
+variant_compare_at_price: product_variant_compare_at_price
+});
+console.log(product_variant_price);
+});
+}
+});
+},1500)
+
+</script>
+NOTE:
+REMEBER THAT IN SOME THEMES ABOVE EACH LOOP FUNCTION CANNOT WORK PROPERLY THEN WE USE THE SOME ADDITIONAL VARIABLE/FUNCTION TO OPRATE THIS LOOP LIKE RED LINE
+STEP# 13
+CUSTOM CHECKOUT FUNCTION BUTTON
+<script>
+FIRST WAY
+if(WSAIO.checkout!=undefined){
+$(".cart_cus_checkout").css("display", "block");
+$("input.cart__submit.btn.wsaio-applied").css("display", "none");
+}else{
+$(".cart_cus_checkout").css("display", "none");
+$("input.cart__submit.btn.wsaio-applied").css("display", "block");
+}
+$('.cart_cus_checkout').click(function(){
+WSAIO.checkout()
+SECOND WAY
+if(WSAIO.checkout!=undefined){
+$(".ws-checkout-btn.btn").css("display", "inline-block");
+$('[name="checkout"]').css("display", "none");
+}else{
+$(".ws-checkout-btn.btn").css("display", "none");
+$('[name="checkout"]').css("display", "block");
+}
+$('.ws-checkout-btn.btn').click(function(){
+WSAIO.checkout()
+})
+})
+</script>
+STEP#14
+CART PAGE PRICE CHANGE
+<script>
+setTimeout(function(){
+$(".js-cart-items-container").each(function(){      //MAIN SELECTOR
+var key = $(this).attr("data-price");
+if(typeof key != "undefined"){
+console.log(key);
+key= key.replace(":","_"); // ATTRIBUTES PASS WITH SELECTOR
+$(this).find(".js-cart-item-info-container").find("[data-price]").removeAttr("class")
+$(this).find(".js-cart-item-info-container").find("[data-price]").addClass("ws-item-price-"+key);
+$(this).find(".cart__final-price").find("[data-cart-item-discounted-price-group]").removeAttr("class");
+$(this).find(".cart__final-price").find("[data-cart-item-discounted-price-group]").addClass("ws-item-total-price-"+key);
+}
+});
+WSAIO.preCheckout();
+},700);
+</script>
+NOTE: THIS CONDITION WORK ONLY A WAY IS PRODUCT KEY CONNOT CHANGE. THIS CASE WE REPLACE IT WITH UNDDERSCORE.
+STEP#15
+VARINT CHANGE WITH THE VIA OBJECT
+<script>
+setTimeout(function(){
+if(typeof key != "undefined"){
+WSAIO.variantChange(variantObj, 'wsaio-pid-'+current_product.id, current_product);
+WSAIO.productDiscount({
+template: 'product',
+product_id: current_product.id,
+product_handle: current_product.handle ,
+variant_id: variantObj.id,
+variant_sku: variantObj.sku,
+variant_price: variantObj.price,
+variant_compare_at_price: null
+});
+}
+},600);
+</script>
+<script>
+setTimeout(function(){
+WSAIO.variantChange(variant, 'wsaio-pid-'+current_product.id, current_product);
+WSAIO.productDiscount({
+template: 'product',
+product_id: cus_variant_change.id,
+product_handle: cus_variant_change.handle ,
+variant_id: variant.id,
+variant_sku: variant.sku,
+variant_price: variant.price,
+variant_compare_at_price: null
+});
+},600)
+product-handlr="{{product.handle}}"
+setTimeout(function(){
+var variant__handle = $('.product-single__meta .product__page_price').attr('product-handlr')
+jQuery.getJSON('/products/'+variant__handle+'.js', function(product) {
+window.current__product = product
+setTimeout(function(){
+WSAIO.variantChange(variant, 'wsaio-pid-'+current__product.id, current__product);
+WSAIO.productDiscount({
+template: 'product',
+product_id: current__product.id,
+product_handle:  current__product.handle,
+variant_id: variant.id,
+variant_sku: variant.sku,
+variant_price: variant.price,
+variant_compare_at_price: variant.compare_at_price
+});
+},600);
+});
+},800);
+setTimeout(function(){
+WSAIO.variantChange(variant, 'wsaio-pid-'+current__product.id, current__product);
+WSAIO.productDiscount({
+template: 'product',
+product_id: current__product.id,
+product_handle:  current__product.handle,
+variant_id: variant.id,
+variant_sku: variant.sku,
+variant_price: variant.price,
+variant_compare_at_price: variant.compare_at_price
+});
+},800)
+},400)
+})
+},800)
+
+setTimeout(function(){
+WSAIO.variantChange(newVariant, 'wsaio-pid-'+current_product.id, current_product);
+setTimeout(function(){
+WSAIO.productDiscount({
+template: 'product',
+product_id: current_product.id,
+product_handle: current_product.handle ,
+variant_id: newVariant.id,
+variant_sku: newVariant.sku,
+variant_price: newVariant.price,
+variant_compare_at_price: null
+});
+},400)
+},600)
+
+CUSTOM Variant CHANGE ON QUICKVIEW AND PRODUCT Page
+<!-- PRODUCT PAGE -->
+$(document).on('change','#shopify-section-static-product .form-field-select-wrapper .form-field-select', function(){
+setTimeout(function(){
+var Vid = $('#shopify-section-static-product [name="id"]').val();
+selected_variant_id = Vid;
+var _indx = current_product.variants.findIndex(function(x){return x.id == Vid})
+if(_indx > -1){
+var _price = current_product.variants[_indx].price;
+var _sku = current_product.variants[_indx].sku;
+var _compare = current_product.variants[_indx].compare_at_price;
+}
+WSAIO.variantChange(current_product.variants[_indx],'.product-page-price',current_product)
+WSAIO.productDiscount({
+template:'product',
+product_id: current_product.id,
+product_handle: current_product.handle,
+variant_id: Vid,
+variant_sku: _sku,
+variant_price: _price,
+variant_compare_at_price: _compare
+});
+},300);
+})
+
+
+<!-- quickView -->
+$(document).on('change','.modal--quickshop-full .form-field-select-wrapper .form-field-select', function(){
+setTimeout(function(){
+var Vid = $('.modal--quickshop-full [name="id"]').val();
+selected_variant_id = Vid;
+var _indx = current_product.variants.findIndex(function(x){return x.id == Vid})
+if(_indx > -1){
+var _price = current_product.variants[_indx].price;
+var _sku = current_product.variants[_indx].sku;
+var _compare = current_product.variants[_indx].compare_at_price;
+}
+WSAIO.variantChange(current_product.variants[_indx],'.modal--quickshop-full .product-pricing',current_product)
+WSAIO.productDiscount({
+template:'product',
+product_id: current_product.id,
+product_handle: current_product.handle,
+variant_id: Vid,
+variant_sku: _sku,
+variant_price: _price,
+variant_compare_at_price: _compare
+});
+},500)
+
+});
+
+</script>
+STEP#16
+VOLUME TABLE DISCOUNT ISSUE MEANS THAT TABLE SHOW THE EMPTY ROWS AND COLUMS THEN
+<script>
+if(d !="")
+{
+d = '<table id="wsaio-volume-discount--table" class="wholesale-table"><thead><tr><th>' + a.translation.buy + " " + a.translation.quantity + "</th><th>" + a.translation.price + "</th></tr></thead><tbody>" + d + "</tbody></table>";
+a.remove_duplicate_table || g("#wsaio-volume-discount--table").remove();
+a.displayTable(d, a.product_qb_table_selector, !0);
+}else{
+a.remove_duplicate_table || g("#wsaio-volume-discount--table").remove();
+}
+</script>
+STEP#17
+$('wholesale-table').remove();
+
+FOR VOLUME DISCOUNT TABLE I HAVE TO CHANGE/COMMENT THE CODE WHICH GIVEN IN THE WHOLESALE ALL IN ONE MIN.JS FILE
+LIKE LINE
+<script type="text/javascript">
+d = [];
+for (f = 0; f < a.product_volume_discount.volume_discount.length; f++) {
+d.push(Number(a.product_volume_discount.volume_discount[f].value));
+}
+</script>
+STEP#18
+FOR SUBCRIPTION ITEMS WE SHOULD HAVE TO CHANGE THE WWHOLESALE ALL IN ONE FILE AND DO SOME CHANGING IN CALLBACK FUMCTION
+<script type="text/javascript">
+setTimeout(function(){
+jQuery.getJSON('/cart/', function(e) {
+WSAIO.subscription_chk = 0;
+$(e.items).each(function(ee){
+if(e.items[ee].properties != null){
+if(e.items[ee].properties.group_id != undefined){
+WSAIO.subscription_chk = 1;
+}
+}
+}).promise().done(function(){
+if( WSAIO.subscription_chk == 1){
+$('span.wsaio--coupon-code-form').css('display','none')
+}else{
+$('span.wsaio--coupon-code-form').css('display','inline-flex')
+}
+})
+});
+},1000);
+</script>
+STEP#19
+FOR CHECKOUT BUTTON IF CART PAGE SHOW THE DISCOUNT BUT FIANL CART PRICE IS NOT WORKING PROPERLY
+<script type="text/javascript">
+setTimeout(function(){
+$('.cart__footer [name="checkout"]').on('click', function(e){
+if(WSAIO.checkout != undefined){
+e.preventDefault();
+WSAIO.checkout();
+return false;
+}
+})
+},1000);
+</script>
+STEP#20
+CART PAGE PRODUCT REMOVE ISSUE IF PRODUCT EXIST ON CART PAGE THEN WE SHOLUD APPLY THIS CONDITION ON REMOVE CART
+<script type="text/javascript">
+setTimeout(function(){
+$.getJSON('/cart',function(x){console.log(x)})
+},1000);
+</script>
+STEP#21
+IF CART PAGE HAVE UPDATE BUTTON THEN.
+<script type="text/javascript">
+g(document).on("change", a.cart_qty_change_selector, function() {
+//g("button[name*=update],input[name*=update]").click();
+//g(a.checkout_selector).attr("disabled", "disabled");
+setTimeout(function() {
+a.preCheckout();
+}, 500);
+});
+</script>
+STEP#22
+FOR SALE TAG CART SAVE AMOUNT/ SAVED PRICE
+<!-- CART PAGE TOTAL SAVED AMOUNT MESSAGE DESIGN -->
+<span class="ws--total-saving"></span>
+THEN PASTE THE DESIGN IN WHOLESALE ALL IN ONE FILE
+{% comment %} Cart page total saved amount message design {% endcomment %}
+
+
+This Below line code for soldout product
+{% if product.available %} wsaio-pid-{{product.id}} {% endif %}
+
+<span class="saved_price-{{product.id}}"></span> <!-- MAKE THIS SELECTOR ON THE SALE TAG -->
+THEN PASTE THE DESIGN IN WHOLESALE ALL IN ONE FILE
+{% comment %} Product's saved price design {% endcomment %}
+{%- capture saved_price_html -%}
+<div class="ws-saved-badge">
+%saved_amount:percentage% OR %saved_amount:price%
+</div>
+{%- endcapture -%}
+STEP#23
+FOR Net Term Button Setting with extra div class="btn__setting"
+<script type="text/javascript">
+if($(".waio__ntBtn--wrapper").length){}else{
+$('.btn__setting').after(_BtnHtml);
+</script>
+STEP#24
+<!--NET TERM -->
+<script type= > if(typeof WSAIO.app_mode != 'undefined'){  } </script>
+
+https://digitalcoo-wholesale-demo-03.myshopify.com/pages/installation-2-3-6
+STEP#25
+<!-- Quick Order Form -->
+https://digitalcoo-wholesale-demo-04.myshopify.com/pages/installation-2-3-6
+STEP#26
+<!--  Advanced Minimum  -->
+<script type= > if(typeof WSAIO.app_mode != 'undefined'){  } </script>
+https://digitalcoo-wholesale-demo-01.myshopify.com/pages/installation-2-3-6
+STEP#27
+LIVE SEARCH OPTION IN WHICH THE WEBSITE SEARCH THE PRODUCT AND SHOW THE LIVE PRICING OF PRODUCT
+PredictiveSearchComponent.prototype._handlePredictiveSearchSuccess = function(
+json
+)
+<script type="text/javascript">
+setTimeout(function(){
+$( ".predictive-search-item" ).each(function() {
+var _this = $(this);
+var handles = _this.find('.predictive-search-item__link').attr("href");
+console.log(handles );
+if(handles != undefined && handles != '#' && handles.indexOf("/products/") > -1){
+handles = handles.split('/products/')[1];
+handles = handles.split('?')[0];
+jQuery.getJSON('/products/'+handles+'.js', function(product) {
+console.log(product);
+_this.find(".predictive-search-item__details.price").addClass('wsaio-pid-'+product.id);
+WSAIO.productDiscount({
+template:'collection',
+product_id: product.id,
+product_handle: product.handle,
+variant_id: product.id,
+variant_sku: product.id,
+variant_price: product.price,
+variant_compare_at_price: null
+})
+});
+}
+})
+},1500);
+</script>
+STEP#27
+FILTER SEARCH DISCOUNT ON THE PRODUCT
+<script type="text/javascript">
+var isLoaded=false;
+var _intv = setInterval(function(){
+if($('.ymm-prd-loader').attr('style') == '' && isLoaded==false){
+isLoaded=true;
+setTimeout(function(){
+console.log("ppppppppppppppppppppp")
+setTimeout(function filterdiscount(){
+console.warn('===============================')
+$( ".clearfix .grid__item--collection-template").each(function() {
+var _this = $(this);
+var handles = _this.find('a').attr("href");
+if(handles != undefined && handles != '#' && handles.indexOf("/products/") > -1){
+handles = handles.split('/products/')[1];
+handles = handles.split('?')[0];
+jQuery.getJSON('/products/'+handles+'.js', function(product) {
+_this.find(".ymm-product-price").addClass('wsaio-pid-'+product.id);
+WSAIO.productDiscount({
+template:'collection',
+product_id: product.id,
+product_handle: product.handle,
+variant_id: product.id,
+variant_sku: product.id,
+variant_price: product.price,
+variant_compare_at_price: null
+});
+});
+}
+});
+},1200);
+},2500)
+}
+else if(!$('.ymm-prd-loader').attr('style')  == '' && isLoaded==true){
+isLoaded=false;
+}
+},500)
+</script>
+STEP#28
+********************************************
+QUICK View
+<script type="text/javascript">
+setTimeout(function(){
+var Vid = $('.fancybox-is-open [name="id"]').val();
+window.selected_variant_id = Vid;
+var handle = $('.fancybox-is-open').find('.quick-shop__title a').attr('href');
+handle = handle.split('/products/')[1];
+handle = handle.split('?')[0];
+jQuery.getJSON('/products/'+handle+'.js', function(product) {
+current_product = product;
+$('.fancybox-is-open').find('.quick-view-price').addClass('wsaio-pid-'+current_product.id);
+var _indx = product.variants.findIndex(function(x){return x.id == Vid})
+if(_indx > -1){
+var _price = product.variants[_indx].price;
+}
+WSAIO.productDiscount({
+product:'product',
+product_id: product.id,
+product_handle: product.handle,
+variant_id: Vid,
+variant_sku: Vid,
+variant_price: _price,
+variant_compare_at_price: null
+});
+});
+},1500);
+</script>
+<script type="text/javascript">
+$("[data-action]").click(function() {
+setTimeout(function(){
+var a_one   =  $('.modal__inner .price-list').attr('product_id');
+var a_two   =  $('.modal__inner .price-list').attr('product_handle');
+var a_three =  $('.modal__inner .price-list').attr('product_variant_id');
+var a_four  =  $('.modal__inner .price-list').attr('product_variant_sku');
+var a_five  =  $('.modal__inner .price-list').attr('product_variant_price');
+var a_six = $('.modal__inner .price-list').attr('product_variant_compare_price');
+WSAIO.productDiscount({
+template: 'product',
+product_id: a_one,
+product_handle: a_two,
+variant_id: a_three,
+variant_sku: a_four,
+variant_price: a_five,
+variant_compare_at_price: a_six
+});
+},1200)
+});
+</script>
+STEP#29
+cart  QUICK View
+<script type="text/javascript">
+$(function(){
+$('.cart-toggle').click(function() {
+setTimeout(function(){
+WSAIO.preCheckout()
+setTimeout(function(){
+WSAIO.preCheckout()
+},1500)
+},800)
+setTimeout(function(){
+WSAIO.checkoutEventListner();
+setTimeout(function(){
+WSAIO.checkoutEventListner();
+},1500)
+},800)
+});
+});
+</script>
+STEP#30
+IF CART DRAWER CHECKOUT BUTTON IS NOT WORKING THEN
+<script type="text/javascript">
+
+$('.').on('click', function(e){
+if(WSAIO.checkout != undefined){
+e.preventDefault();
+WSAIO.checkout();
+return false;
+}
+})
+</script>
+STEP#31
+RECURION FUNTION CALLL METHEOD
+<script type="text/javascript">
+function _recurion(time){
+if(time<=0) return false;
+setTimeout(function(){
+_recurion(--time)
+},2500)
+}
+setTimeout(function(){
+_recurion(10)
+},2500)
+</script>
+STEP#31
+IF I FOUND THE ISSUES ACCORDING TO CART DRAfT MODE LIKE CART SHOW ON CHECKOUT PAGE THEN WHAT I SHOLUD
+FIRST STEP COMMENT THE buyNowEventListener IN WHOLESALE.MIN.JS FILE then MAKE AN EXTRA CLASS IN PRODUCT DESIGN IN WHOLESALE.ALL.IN.ONE FILE
+THEN FIND THE LENGHT AND CALL THE FUNCTION.
+LIKE BELOW EXAMPLE
+<script type="text/javascript" >
+if($('.wsaio_chkr').length < 1){
+if(typeof response.quantity_breaks != "undefined" && response.quantity_breaks.length){
+console.log("response",response,typeof response.quantity_breaks , typeof response.product_regular_discount);
+setTimeout(function(){
+WSAIO.buyNowEventListener();
+setTimeout(function(){
+WSAIO.buyNowEventListener();
+},1800)
+},1500)
+}
+if(typeof response.product_regular_discount != "undefined" && typeof response.product_regular_discount.applies_to != "undefined"){
+console.log("response",response,typeof response.quantity_breaks , typeof response.product_regular_discount);
+setTimeout(function(){
+WSAIO.buyNowEventListener();
+setTimeout(function(){
+WSAIO.buyNowEventListener();
+},1800)
+},1500)
+}
+if(typeof response.shipping != "undefined"){
+console.log("response_shipping",response,typeof response.shipping);
+setTimeout(function(){
+WSAIO.buyNowEventListener();
+setTimeout(function(){
+WSAIO.buyNowEventListener();
+},1800)
+},1500)
+}
+}
+</script>
+STEP#32
+STORE PICKUP
+MARK  THIS CHECK BOX
+<strong>Coupon Code discount method</strong>
+FIRST STEP COMMENT CHECKOUT FUNCTION IN WHOLESALE.MIN.JS FILE
+<script type="text/javascript" >
+WSAIO.checkoutEventListner = function(b) {
+g(a.checkout_selector).removeAttr("disabled");
+// g(document).on("click", a.checkout_selector, function(b) {
+// b.preventDefault();
+// b.stopImmediatePropagation();
+// b.stopPropagation();
+// g(this).attr("disabled");
+// g(this).find('[name="discount"], [name="clear_discount"]').remove();
+// g(this).parents("form").find('[name="discount"], [name="clear_discount"]').remove();
+// k("Wholesale All In One checkout is working.");
+// a.checkout();
+// });
+};
+</script >
+
+THEN PASTE THE BELOW CODE IN ADDSON FILE IN STORE FILE
+
+<script type="text/javascript">
+if(WSAIO.checkout != undefined){
+console.log('App is working now');
+document.addEventListener("DOMContentLoaded", function(event) {
+window.customCheckoutValidation = function() {
+WSAIO.getDiscountCode(function(b, c) {
+var discountt = c.checkout_url.split("discount=")[1];
+var discount = (discountt === undefined) ? ' ' : discountt;
+var checkout_params = Zapiet.Widget.getCheckoutParams();
+checkout_params.discount = discount;
+window.location = '/checkout?' + new URLSearchParams(checkout_params);
+});
+};
+});
+}
+</script>
+STEP#33
+ON QUICK VIEW TABLE REPEUTITAION REMOVE
+<style type="text/css" >
+.wholesale-table:not(:nth-child(2)) {display: none;}
+setTimeout(function(){
+$('.wholesale-table').each(function (index) {
+if (index > 1) {
+$(this).remove();
+}
+});
+},1200);
+</style>
+STEP#34
+IF CHECK THE CLASS THAT IS FALL IN BODY OR APPEND ON LAST
+<script>
+$(document).bind('DOMNodeInserted', function(e) {
+var element = e.target;
+var elm = $(element).attr("class")
+console.log(elm)
+});
+
+$(document).bind('DOMNodeInserted', function(e) {
+var element = e.target;
+var elm = $(element).attr("class")
+//     warn(elm)
+if(typeof elm != 'undefined'){
+if(elm.indexOf('gf_product-bgmore')>-1){
+aikon-modal
+}
+}
+});
+//         Product Page Code Start
+</script>
+STEP#35
+FILTER LOADER
+<script>
+var isLoaded=false;
+var _intv = setInterval(function(){
+if($('.collection__loading-icon.button.is-loading.is-loading--icon-only').attr('style') !== undefined && isLoaded==false){
+isLoaded=true;
+
+}
+else if($('.collection__loading-icon.button.is-loading.is-loading--icon-only').attr('style') == undefined && isLoaded==true){
+
+setTimeout(function(){
+$('span.product-thumbnail__price.price').each(function (){
+var a_one   =  $(this).attr('product_id');
+var a_two   =  $(this).attr('product_handle');
+var a_three =  $(this).attr('product_variant_id');
+var a_four  =  $(this).attr('product_variant_sku');
+var a_five  =  $(this).attr('product_variant_price');
+var a_six = $(this).attr('product_variant_compare_price');
+WSAIO.productDiscount({
+template: 'collection',
+product_id: a_one,
+product_handle: a_two,
+variant_id: a_three,
+variant_sku: a_four,
+variant_price: a_five,
+variant_compare_at_price: a_six
+});
+});
+},900)
+isLoaded=false;
+}
+else if($('.collection__loading-icon.button.is-loading.is-loading--icon-only').attr('style') !== undefined && isLoaded==true){
+}
+},500)
+</script>
+STEP#34
+DESIGN REPEUTITAION REMOVE like DISPLAY:NONE AND BLOCK.
+<script>
+setTimeout(function(){
+if($('.product-single__meta .empty').length > 0)
+{
+$(".product-single__meta .product__price-savings").css('display','none')
+}
+else
+{
+$(".product-single__meta .product__price-savings").css('display','inline-flex')
+}
+},600)
+setTimeout(function(){
+var sld_chk = $('.sold-out__container').text().trim()
+if(sld_chk == "Sold Out")
+{
+$(".modal_price .notprice").css('display','none')
+}
+else
+{
+$(".modal_price .notprice").css('display','block')
+}
+},400)
+</script>
+STEP#35
+Checkout not WORKING
+<script type="text/javascript">
+if(WSAIO.checkout != undefined){
+var _atcBtn = '<button type="submit" name="waio_addToCart" class="btn"> Check out </button>' ;
+$('[name="checkout"]').replaceWith(_atcBtn);
+}
+$('[name="waio_addToCart"]').on('click',function(e){
+if(WSAIO.checkout != undefined){
+e.preventDefault();
+WSAIO.checkout();
+return false;
+}
+})
+</script>
+STEP#36
+Multi Currency
+FIRST Step change the selector like this
+WSAIO.currency_selector = '[name*="currencies"],[id*="currencies"],[name*="currency_code"]';
+<script src="https://cdn.shopify.com/s/javascripts/currencies.js"></script>
+<script>
+WSAIO.cartCurrency = function(res) {
+setTimeout(function(){
+if (WSAIO.selectedCurrency() != WSAIO.shopInfo.currency ) {
+//check_Currency();
+
+var line_items = res.line_items;
+var regular_discounted_price = [];
+var total_discounted_price = [];
+//--------------subtotal discounted price------
+var discount12 = res.wholesale_total_discount;
+discount12 = Number(WSAIO.Currency.convert(WSAIO.Currency.rates, discount12, WSAIO.shopInfo.currency, WSAIO.selectedCurrency())).toFixed(2);
+var subtotal = Number(res.items_subtotal_price) - Number(discount12);
+discount12 = WSAIO.formatMoney(Number(discount12).toFixed(2));
+subtotal = WSAIO.formatMoney(Number(subtotal).toFixed(2));
+$('.subtotal-item-price-on-cart .h4').text(subtotal);
+$('.ajaxcart__price .h4').text(subtotal);
+//             $('{ {saved_amount_selector}}').text(subtotal);
+//---------------  line item loop -------------
+for (i = 0; i < line_items.length; i++) {
+//--------------single discounted price------
+var pri_convert = WSAIO.Currency.convert(WSAIO.Currency.rates, line_items[i].wholesale.saved_amount.price, WSAIO.shopInfo.currency, WSAIO.selectedCurrency());
+var regular = Number(line_items[i].price) - Number(pri_convert);
+regular = WSAIO.formatMoney(Number(regular).toFixed(2));
+regular_discounted_price[i] = regular;
+//--------------Total discounted price------
+var total = Number(line_items[i].quantity) * Number(pri_convert);
+var accurate_total = Number(line_items[i].wholesale.item_subtotal_compare_at_price) - Number(total);
+accurate_total = WSAIO.formatMoney(Number(accurate_total).toFixed(2));
+total_discounted_price[i] = accurate_total;
+if (i == line_items.length - 1) {
+paste_value();
+}
+}
+function paste_value() {
+$('.row_item').each(function (e) {
+var _this = $(this);
+_this.find('.single-item-price-on-cart .cart__price').text(regular_discounted_price[e]);
+_this.find('.total-item-price-on-cart .cart__price').text(total_discounted_price[e]);
+});
+$('.row_item').each(function (e) {
+var _this = $(this);
+_this.find('.ajaxcart__price .cart__price').text(regular_discounted_price[e]);
+_
+});
+}
+}
+},500);
+}
+
+</script >
+STEP# 37 New CONDITION applied
+<script>
+if(typeof WSAIO !== "unfined"){
+setTimeout(function(){
+WSAIO.preCheckout();
+},600)
+}
+
+setTimeout(function(){
+currencyConverter.convertCurrencies();
+$('.money_currency').remove();
+$('.money').append("<span class='money_currency'> "+$('.top-bar [data-disclosure-toggle]  span.currency-code').text()+'</span>')
+},800)
+</script>
+STEP# 38
+template CONDITION
+{%if template.name == 'product' %}  {% endif%}
+STEP# 39
+QUANTITY Control FUNTION if QUANTITY CHANGE with ajax
+waioMOC.cart.item_count = f.item_count;
